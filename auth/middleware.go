@@ -18,10 +18,10 @@ type Middleware interface {
 	GetContextUser(ctx context.Context) user.User
 }
 
-func DefaultMiddleware(userFactory user.Factory, rendering rendering.Service, token token.Service) *defaultMiddleware {
+func DefaultMiddleware(userRepoFactory user.RepoFactory, rendering rendering.Service, token token.Service) *defaultMiddleware {
 	type ctxKey struct{}
 	return &defaultMiddleware{
-		userFactory,
+		userRepoFactory,
 		rendering,
 		token,
 		&ctxKey{},
@@ -29,9 +29,9 @@ func DefaultMiddleware(userFactory user.Factory, rendering rendering.Service, to
 }
 
 type defaultMiddleware struct {
-	userFactory user.Factory
-	rendering   rendering.Service
-	token       token.Service
+	userRepoFactory user.RepoFactory
+	rendering       rendering.Service
+	token           token.Service
 
 	authUserCtxKey interface{}
 }
@@ -51,7 +51,7 @@ func (m *defaultMiddleware) LoadUser() func(http.Handler) http.Handler {
 				return
 			}
 
-			user, err := m.userFactory.Repo().Get(userID)
+			user, err := m.userRepoFactory.Repo().Get(userID)
 			if err != nil {
 				m.rendering.RenderError(w, r, errors.Wrapf(err, "Failed to get user"), nil, http.StatusInternalServerError)
 				return

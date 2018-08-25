@@ -19,9 +19,9 @@ type Service interface {
 	MagicLogin(user User, magicToken string) (token string, err error)
 }
 
-func DefaultService(userFactory user.Factory, rendering rendering.Service, encryption encryption.Service, token token.Service) *defaultService {
+func DefaultService(userRepoFactory user.RepoFactory, rendering rendering.Service, encryption encryption.Service, token token.Service) *defaultService {
 	return &defaultService{
-		userFactory,
+		userRepoFactory,
 		rendering,
 		encryption,
 		token,
@@ -29,16 +29,16 @@ func DefaultService(userFactory user.Factory, rendering rendering.Service, encry
 }
 
 type defaultService struct {
-	userFactory user.Factory
-	rendering   rendering.Service
-	encryption  encryption.Service
-	token       token.Service
+	userRepoFactory user.RepoFactory
+	rendering       rendering.Service
+	encryption      encryption.Service
+	token           token.Service
 }
 
 func (a *defaultService) Register(u User) (token string, err error) {
 	logger := logrus.NewEntry(logrus.StandardLogger())
 
-	userRepo := a.userFactory.Repo()
+	userRepo := a.userRepoFactory.Repo()
 	if err = userRepo.Add(u); err != nil {
 		if userRepo.IsDupErr(err) {
 			userMessage := "Failed to add new user, user already exists"

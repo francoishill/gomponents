@@ -10,6 +10,4 @@ type User interface {
 
 	PasswordHash() string
 	MagicLoginToken() *string
-
-	IsAdmin() bool
 }

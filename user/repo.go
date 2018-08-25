@@ -7,4 +7,9 @@ type Repo interface {
 
 	Add(user User) error
 	Get(id string) (User, error)
+	List() ([]User, error)
+}
+
+type RepoFactory interface {
+	Repo() Repo
 }
