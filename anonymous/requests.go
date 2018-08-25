@@ -10,17 +10,17 @@ type RequestFactory interface {
 
 type RegisterRequest interface {
 	Validate() error
-	ToUser() auth.User
+	LoadUser() (auth.User, error)
 }
 
 type LoginRequest interface {
 	Validate() error
 	Password() string
-	ToUser() auth.User
+	LoadUser() (auth.User, error)
 }
 
 type MagicLoginRequest interface {
 	Validate() error
 	Token() string
-	ToUser() auth.User
+	LoadUser() (auth.User, error)
 }

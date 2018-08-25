@@ -21,7 +21,12 @@ func Router(rendering rendering.Service, auth auth.Service, requestFactory Reque
 			return
 		}
 
-		user := body.ToUser()
+		user, err := body.LoadUser()
+		if err != nil {
+			rendering.RenderError(w, r, err, nil, http.StatusUnauthorized)
+			return
+		}
+
 		token, err := auth.Register(user)
 		if err != nil {
 			rendering.RenderError(w, r, err, nil, http.StatusUnauthorized)
@@ -38,7 +43,12 @@ func Router(rendering rendering.Service, auth auth.Service, requestFactory Reque
 			return
 		}
 
-		user := body.ToUser()
+		user, err := body.LoadUser()
+		if err != nil {
+			rendering.RenderError(w, r, err, nil, http.StatusUnauthorized)
+			return
+		}
+
 		token, err := auth.Login(user, body.Password())
 		if err != nil {
 			rendering.RenderError(w, r, err, nil, http.StatusUnauthorized)
@@ -55,7 +65,12 @@ func Router(rendering rendering.Service, auth auth.Service, requestFactory Reque
 			return
 		}
 
-		user := body.ToUser()
+		user, err := body.LoadUser()
+		if err != nil {
+			rendering.RenderError(w, r, err, nil, http.StatusUnauthorized)
+			return
+		}
+
 		token, err := auth.MagicLogin(user, body.Token())
 		if err != nil {
 			rendering.RenderError(w, r, err, nil, http.StatusUnauthorized)
